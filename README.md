@@ -48,6 +48,18 @@ To enable debugging (print to stderr which files are locked):
 LD_PRELOAD=/path/to/flockwrap.so FLOCKWRAP_PREFIX=/ FLOCKWRAP_DEBUG=1 program [args]
 ```
 
+# Compatibility
+
+The code has been written and tested on Linux. It does include a few artefacts
+that are Linux-specific, such as:
+* Obtaining the full path that corresponds to a file descriptor by using
+  `/proc/self/fd`.
+* Using `dlsym()` with `RTLD_NEXT`.
+
+Therefore, the code is *not* portable to other POSIX systems in its current
+form. It can be ported, but this has not been a focus area, since the primary
+use case is Linux.
+
 # Credits
 
 This library was inspired by [flockit](https://github.com/smerritt/flockit).
