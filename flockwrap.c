@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/file.h>
+#include <sys/stat.h>
 
 static void __attribute__((format(printf, 1, 2))) dbg(const char *fmt, ...)
 {
@@ -36,12 +37,16 @@ static int wrap_open_call(int fd, int flags)
 	char link[40];
 	char path[PATH_MAX];
 	int plen, xlen;
+	struct stat sb;
 
 	if (fd < 0)
 		return fd;
 
 	prefix = getenv("FLOCKWRAP_PREFIX");
 	if (!prefix)
+		return fd;
+
+	if (fstat(fd, &sb) == 0 && (sb.st_mode & S_IFMT) != S_IFREG)
 		return fd;
 
 	plen = snprintf(link, sizeof(link), "/proc/self/fd/%d", fd);
